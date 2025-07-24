@@ -1,12 +1,16 @@
-import React, { useEffect,useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList, Alert, Image } from 'react-native';
+import * as IMG_CONST from "../Screen/assets";
 
 const HomeScreen = () => {
 
-   const [userdata, setUserdata] = useState('');
-
+  const [userdata, setUserdata] = useState('');
+  const [SportLeagues, setSportLeagues] = useState('');
   useEffect(() => {
     getUserData();
+    getSportLeagues();
+    getTopTraded();
+    getUpcomingEvent();
   }, []);
 
   const getUserData = async () => {
@@ -23,34 +27,110 @@ const HomeScreen = () => {
         return response.json();
       })
       .then(async data => {
-       await setUserdata(data)
-        
+        await setUserdata(data)
+
       })
       .catch(error => {
         console.error('Error fetching user data:', error);
       });
 
+  };
+
+  const getSportLeagues = async () => {
+    fetch('https://api.4cx.io/exchange/getSportLeagues', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(async data => {
+        await setSportLeagues(data)
+        console.log("@@@==========>getSportLeagues",data)
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+      });
   }
+
+   const getTopTraded = async () => {
+    fetch('https://api.4cx.io/session/getTopTraded', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(async data => {
+        console.log("@@@==========>getTopTraded",data)
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+      });
+  }
+
+  const getUpcomingEvent = async () => {
+    fetch('https://api.4cx.io/exchange/getUpcomingEvent', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(async data => {
+        console.log("@@@==========>getUpcomingEvent",data)
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
+      });
+  }
+
+  
+
   return (
     <ScrollView style={styles.container}>
       <View style={{ padding: 20 }}>
         <View style={{ marginTop: 73, justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
           <Text style={{ fontWeight: "400", fontStyle: "normal", fontSize: 16, lineHeight: "100%", color: "#FBFCFF" }}>{userdata?.data?.user?.username}</Text>
-          <View style={{ width: 24, height: 24, backgroundColor: "red" }}></View>
+          <View style={{ width: 24, height: 24 }}>
+            <Image source={IMG_CONST.modalCloseImg} style={{ width: 24, height: 24 }} />
+          </View>
         </View>
         <View style={{ width: 253, height: 60, alignItems: "center", alignSelf: "center", marginTop: 40 }}>
           <Text style={{ fontSize: 12, fontWeight: "400", lineHeight: "100%", color: "#8E8E93" }}>Available Balance</Text>
-          <View style={{ width: 242, height: 42, borderRadius: 3, borderWidth: 0.5, marginTop: 5, borderColor: "#E2E0E0" }}>
-            <Text style={{fontSize:32,fontWeight:"700",lineHeight:"100%",textAlign:"center",color:"rgba(255, 255, 255, 1)"}}>{userdata?.data?.user?.coinsBalance}</Text>
+          <View style={{ width: 242, height: 42, borderRadius: 3, borderWidth: 0.5, marginTop: 5, borderColor: "#E2E0E0", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+            <View style={{ width: 25.4, height: 17, marginLeft: 10 }}>
+              <Image source={IMG_CONST.cash} style={{ width: 25.4, height: 17 }} />
+            </View>
+            <Text style={{ fontSize: 32, fontWeight: "700", lineHeight: "100%", textAlign: "center", color: "rgba(255, 255, 255, 1)" }}>{userdata?.data?.user?.coinsBalance}</Text>
+            <View style={{ width: 10, height: 5, marginRight: 10 }}>
+              <Image source={IMG_CONST.Vector} style={{ width: 10, height: 5 }} />
+            </View>
           </View>
         </View>
         <Text style={{ fontWeight: "400", fontSize: 12, lineHeight: "100%", textDecorationStyle: "solid", color: "#E2E0E0", textAlign: "center", marginTop: 5, textDecorationLine: "underline" }}>$5,000 potential payout</Text>
         <View style={styles.buttonRow}>
           <TouchableOpacity style={styles.withdrawBtn}>
+            <Image source={IMG_CONST.Withdraw} style={{ width: 17.64, height: 16, marginRight: 5 }} />
             <Text style={styles.btnText1}>Withdraw</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.depositBtn}>
-            <Text style={styles.btnText}>Deposit</Text>
+            <Image source={IMG_CONST.Deposit} style={styles.depositBtn} />
           </TouchableOpacity>
         </View>
       </View>
@@ -70,27 +150,34 @@ const HomeScreen = () => {
         </View>
         <View style={{ width: "100%", flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={{ fontSize: 16, fontWeight: "700", lineHeight: "100%", style: "bold", color: "rgba(255, 255, 255, 1)", left: 15, marginTop: 10 }}>Hottest Markets</Text>
-          <Text style={{ fontSize: 16, fontWeight: "700", lineHeight: "100%", style: "bold", color: "rgba(98, 195, 112, 1)", right: 15, marginTop: 10 }}>View All</Text>
+          <TouchableOpacity>
+            <Text style={{ fontSize: 16, fontWeight: "700", lineHeight: "100%", style: "bold", color: "rgba(98, 195, 112, 1)", right: 15, marginTop: 10 }}>View All</Text>
+          </TouchableOpacity>
         </View>
         <View style={{ width: 220, height: 165, borderRadius: 6, borderWidth: 0.5, backgroundColor: "#272727", borderColor: "rgba(217, 217, 217, 0.5)", marginTop: 10, justifyContent: "space-evenly", left: 15.75 }}>
           <View style={{ width: 191.25, height: 95.5, alignSelf: "center", justifyContent: "space-between", marginTop: 8 }}>
             <View style={{ width: 191.25, flexDirection: "row", justifyContent: "space-between" }}>
               <View style={{ width: 69, height: 42, borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)" }}>
               </View>
-              <View style={{ width: 41.35, height: 42, borderRadius: 6, backgroundColor: "rgba(60, 60, 67, 0.6)" }}></View>
+              <View style={{ width: 41.35, height: 42, borderRadius: 6, backgroundColor: "rgba(60, 60, 67, 0.6)", justifyContent: "center", alignItems: "center" }}>
+                <Image source={IMG_CONST.basketball} style={{ width: 30, height: 25 }} />
+              </View>
               <View style={{ width: 69, height: 42, borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)" }}>
               </View>
             </View>
             <View style={{ width: 191.25, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
               <View style={{ width: 69, height: 45, borderRadius: 5, borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
               </View>
-              <View style={{ width: 25, height: 19, borderRadius: 6, backgroundColor: "rgba(142, 142, 147, 1)" }}></View>
+              <View style={{ width: 25, height: 19 }}>
+                <Image source={IMG_CONST.photo} style={{ width: 18, height: 18 }} />
+              </View>
               <View style={{ width: 69, height: 45, borderRadius: 5, borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
               </View>
             </View>
           </View>
-          <View style={{ width: 191.25, height: 20, borderRadius: 45, backgroundColor: "rgba(101, 113, 83, 1)", alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
-            <Text style={{ fontWeight: "500", fontSize: 14, lineHeight: "100%", color: "rgba(226, 224, 224, 1)" }}>200.3k</Text>
+          <View style={{ width: 191.25, height: 20, borderRadius: 45, flexDirection: "row", backgroundColor: "rgba(101, 113, 83, 1)", alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
+            <Image source={IMG_CONST.equalizer} style={{ width: 15, height: 15, marginRight: 5 }} />
+            <Text style={{ fontWeight: "500", fontSize: 14, marginLeft: 5, lineHeight: "100%", color: "rgba(226, 224, 224, 1)" }}>200.3k</Text>
           </View>
           <Text style={{ fontSize: 12, lineHeight: "100%", fontWeight: 400, color: "rgba(142, 142, 147, 1)", textAlign: "center" }}>7:30pm EST 05 JUN</Text>
         </View>
@@ -100,20 +187,25 @@ const HomeScreen = () => {
             <View style={{ width: 191.25, flexDirection: "row", justifyContent: "space-between" }}>
               <View style={{ width: 69, height: 42, borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)" }}>
               </View>
-              <View style={{ width: 41.35, height: 42, borderRadius: 6, backgroundColor: "rgba(60, 60, 67, 0.6)" }}></View>
+              <View style={{ width: 41.35, height: 42, borderRadius: 6, backgroundColor: "rgba(60, 60, 67, 0.6)", justifyContent: "center", alignItems: "center" }}>
+                <Image source={IMG_CONST.basketball} style={{ width: 30, height: 25 }} />
+              </View>
               <View style={{ width: 69, height: 42, borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)" }}>
               </View>
             </View>
             <View style={{ width: 191.25, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
               <View style={{ width: 69, height: 45, borderRadius: 5, borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
               </View>
-              <View style={{ width: 25, height: 19, borderRadius: 6, backgroundColor: "rgba(142, 142, 147, 1)" }}></View>
+              <View style={{ width: 25, height: 19 }}>
+                <Image source={IMG_CONST.photo} style={{ width: 18, height: 18 }} />
+              </View>
               <View style={{ width: 69, height: 45, borderRadius: 5, borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
               </View>
             </View>
           </View>
-          <View style={{ width: 191.25, height: 20, borderRadius: 45, backgroundColor: "rgba(101, 113, 83, 1)", alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
-            <Text style={{ fontWeight: "500", fontSize: 14, lineHeight: "100%", color: "rgba(226, 224, 224, 1)" }}>200.3k</Text>
+          <View style={{ width: 191.25, height: 20, borderRadius: 45, flexDirection: "row", backgroundColor: "rgba(101, 113, 83, 1)", alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
+            <Image source={IMG_CONST.equalizer} style={{ width: 15, height: 15, marginRight: 5 }} />
+            <Text style={{ fontWeight: "500", fontSize: 14, marginLeft: 5, lineHeight: "100%", color: "rgba(226, 224, 224, 1)" }}>200.3k</Text>
           </View>
           <Text style={{ fontSize: 12, lineHeight: "100%", fontWeight: 400, color: "rgba(142, 142, 147, 1)", textAlign: "center" }}>7:30pm EST 05 JUN</Text>
         </View>
@@ -165,6 +257,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     justifyContent: "center",
     alignItems: 'center',
+    flexDirection: "row",
   },
   depositBtn: {
     backgroundColor: '#ffffff',
@@ -182,7 +275,8 @@ const styles = StyleSheet.create({
   btnText1: {
     color: '#FFFFFF',
     fontWeight: '400',
-    fontSize: 16
+    fontSize: 16,
+    marginLeft: 5
   },
   sportsIcons: {
     flexDirection: 'row',
