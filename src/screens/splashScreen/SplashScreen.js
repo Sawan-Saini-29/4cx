@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Image, StyleSheet } from 'react-native';
-import * as IMG_CONST from '../Screen/assets';
+import * as IMG_CONST from '../../components/assets';
 import { useNavigation } from '@react-navigation/native';
 
 const SplashScreen = () => {

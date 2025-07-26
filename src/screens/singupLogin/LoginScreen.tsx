@@ -11,10 +11,11 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import * as IMG_CONST from '../Screen/assets';
+import * as IMG_CONST from '../../components/assets';
+import ApiService from '../../apiService/apiService';
 
 const LoginScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation() as any;
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -34,23 +35,21 @@ const LoginScreen = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('https://api.4cx.io/user/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        }),
-      });
-
-      const data = await response.json();
-      console.log('✅ Login success:', data);
-
+      const payload = {
+        username,
+        password,
+      }
+      const response = await ApiService.post<any>(
+        "user/login",
+        payload,
+        'json' 
+      );
+      console.log('✅ Login success:', response);
       // TODO: Check response status or token here before navigating
+      if(response) {
       navigation.navigate('HomeScreen');
-    } catch (error) {
+      }
+    } catch (error: any) {
       console.log('❌ Network or parsing error:', error.message);
       Alert.alert('Login Failed', 'Something went wrong. Please try again.');
     } finally {

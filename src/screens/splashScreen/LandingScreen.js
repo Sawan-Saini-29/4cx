@@ -6,7 +6,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import * as IMG_CONST from '../Screen/assets';
+import * as IMG_CONST from '../../components/assets';
 
 const LandingScreen = () => {
   const navigation = useNavigation();

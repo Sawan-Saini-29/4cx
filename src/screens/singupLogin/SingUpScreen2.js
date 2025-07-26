@@ -10,7 +10,7 @@ import {
     ScrollView,
     Image
 } from 'react-native';
-import * as IMG_CONST from "../Screen/assets";
+import * as IMG_CONST from "../../components/assets";
 
 const SingUpScreen2 = () => {
     return (
