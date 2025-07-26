@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ActivityIndicator } from 'react-native';
-import axios from 'axios';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+  ScrollView,
+  Image,
+  StyleSheet,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import * as IMG_CONST from '../Screen/assets';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -12,7 +22,7 @@ const LoginScreen = () => {
 
   const validateInputs = () => {
     if (!username || !password) {
-      Alert.alert("Validation Error", "Username and password are required.");
+      Alert.alert('Validation Error', 'Username and password are required.');
       return false;
     }
     return true;
@@ -27,71 +37,149 @@ const LoginScreen = () => {
       const response = await fetch('https://api.4cx.io/user/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          "username": username,
-          "password": password
-        })
+          username,
+          password,
+        }),
       });
+
       const data = await response.json();
-      navigation.navigate("HomeScreen")
       console.log('✅ Login success:', data);
+
+      // TODO: Check response status or token here before navigating
+      navigation.navigate('HomeScreen');
     } catch (error) {
       console.log('❌ Network or parsing error:', error.message);
+      Alert.alert('Login Failed', 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
-
-  }
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Image source={IMG_CONST.SpleshIcon} style={styles.logoImage} />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        autoCapitalize="none"
-        onChangeText={setUsername}
-      />
+      <View style={styles.card}>
+        {/* Email Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            placeholder="Enter Email"
+            placeholderTextColor="#aaa"
+            style={styles.input}
+            onChangeText={setUsername}
+            value={username}
+            autoCapitalize="none"
+          />
+        </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        secureTextEntry
-        onChangeText={setPassword}
-      />
+        {/* Password Field */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            placeholder="Enter Password"
+            placeholderTextColor="#aaa"
+            style={styles.input}
+            onChangeText={setPassword}
+            value={password}
+            secureTextEntry
+          />
+        </View>
 
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
-        <Button title="Login" onPress={handleLogin} />
-      )}
-    </View>
+        {/* Login Button or Loader */}
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />
+        ) : (
+          <TouchableOpacity onPress={handleLogin}>
+            <Image source={IMG_CONST.LogInButton} style={styles.loginButton} />
+          </TouchableOpacity>
+        )}
+
+        {/* Forgot Password */}
+        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+      </View>
+
+      {/* Signup Prompt */}
+      <Text style={styles.signupPrompt}>
+        First time?{' '}
+        <Text style={styles.signupLink}>
+          Sign Up
+        </Text>
+      </Text>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 24,
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#fff'
+    flexGrow: 1,
+    backgroundColor: '#272D58',
+    alignItems: 'center',
+    padding: 20,
   },
-  title: {
-    fontSize: 28,
-    marginBottom: 24,
-    textAlign: 'center',
+  logoImage: {
+    width: 209,
+    height: 121,
+    marginTop: 40,
+  },
+  card: {
+    width: 373,
+    backgroundColor: 'rgba(53, 53, 53, 1)',
+    borderRadius: 10,
+    marginTop: 80,
+    paddingVertical: 30,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+  },
+  inputGroup: {
+    width: 351,
+    marginTop: 20,
+  },
+  label: {
+    fontWeight: '500',
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 1)',
+    marginBottom: 5,
   },
   input: {
-    borderWidth: 1,
-    marginBottom: 16,
+    width: '100%',
+    height: 36,
+    backgroundColor: 'rgba(35, 35, 35, 1)',
+    color: '#fff',
+    paddingHorizontal: 10,
     borderRadius: 6,
-    padding: 10,
+  },
+  loginButton: {
+    width: 351,
+    height: 44,
+    alignSelf: 'center',
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  loader: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  forgotPasswordText: {
     fontSize: 16,
+    textDecorationLine: 'underline',
+    fontWeight: '400',
+    textAlign: 'center',
+    color: 'rgba(226, 224, 224, 1)',
+    marginBottom: 10,
+  },
+  signupPrompt: {
+    fontSize: 20,
+    fontWeight: '400',
+    color: 'rgba(255, 255, 255, 1)',
+    marginTop: 20,
+  },
+  signupLink: {
+    color: 'rgba(0, 136, 255, 1)',
+    textDecorationLine: 'underline',
   },
 });
 

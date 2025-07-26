@@ -6,6 +6,7 @@ const HomeScreen = () => {
 
   const [userdata, setUserdata] = useState('');
   const [SportLeagues, setSportLeagues] = useState('');
+  const [TopTraded, setTopTraded] = useState(null)
   useEffect(() => {
     getUserData();
     getSportLeagues();
@@ -51,14 +52,14 @@ const HomeScreen = () => {
       })
       .then(async data => {
         await setSportLeagues(data)
-        console.log("@@@==========>getSportLeagues",data)
+        console.log("@@@==========>getSportLeagues", data)
       })
       .catch(error => {
         console.error('Error fetching user data:', error);
       });
   }
 
-   const getTopTraded = async () => {
+  const getTopTraded = async () => {
     fetch('https://api.4cx.io/session/getTopTraded', {
       method: 'GET',
       headers: {
@@ -72,7 +73,8 @@ const HomeScreen = () => {
         return response.json();
       })
       .then(async data => {
-        console.log("@@@==========>getTopTraded",data)
+        setTopTraded(data)
+        console.log("@@@==========>getTopTraded", data)
       })
       .catch(error => {
         console.error('Error fetching user data:', error);
@@ -93,14 +95,14 @@ const HomeScreen = () => {
         return response.json();
       })
       .then(async data => {
-        console.log("@@@==========>getUpcomingEvent",data)
+        console.log("@@@==========>getUpcomingEvent", data)
       })
       .catch(error => {
         console.error('Error fetching user data:', error);
       });
   }
 
-  
+
 
   return (
     <ScrollView style={styles.container}>
@@ -154,32 +156,50 @@ const HomeScreen = () => {
             <Text style={{ fontSize: 16, fontWeight: "700", lineHeight: "100%", style: "bold", color: "rgba(98, 195, 112, 1)", right: 15, marginTop: 10 }}>View All</Text>
           </TouchableOpacity>
         </View>
-        <View style={{ width: 220, height: 165, borderRadius: 6, borderWidth: 0.5, backgroundColor: "#272727", borderColor: "rgba(217, 217, 217, 0.5)", marginTop: 10, justifyContent: "space-evenly", left: 15.75 }}>
-          <View style={{ width: 191.25, height: 95.5, alignSelf: "center", justifyContent: "space-between", marginTop: 8 }}>
-            <View style={{ width: 191.25, flexDirection: "row", justifyContent: "space-between" }}>
-              <View style={{ width: 69, height: 42, borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)" }}>
+        <View>
+          <FlatList
+            contentContainerStyle={{ justifyContent: "space-between", }}
+            data={TopTraded?.data?.topTradedOrderbooks}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }) =>
+              <View style={{
+                width: 220, height: 165, borderRadius: 6, borderWidth: 0.5, backgroundColor: "#272727", borderColor: "rgba(217, 217, 217, 0.5)", marginTop: 10, justifyContent: "space-evenly",
+                marginHorizontal: 16,
+              }}>
+                <View style={{ width: 191.25, height: 95.5, alignSelf: "center", justifyContent: "space-between", marginTop: 8 }}>
+                  <View style={{ width: 191.25, flexDirection: "row", justifyContent: "space-between" }}>
+                    <View style={{ width: 69, height: 42, borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)", justifyContent: "center", alignItems: "center" }}>
+                      <Text style={{ fontWeight: "500", fontSize: 24, lineHeight: "100%", color: "rgba(251, 252, 255, 1)" }}>OKC</Text>
+                    </View>
+                    <View style={{ width: 41.35, height: 42, borderRadius: 6, backgroundColor: "rgba(60, 60, 67, 0.6)", justifyContent: "center", alignItems: "center" }}>
+                      <Image source={IMG_CONST.basketball} style={{ width: 30, height: 25 }} />
+                    </View>
+                    <View style={{ width: 69, height: 42, borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)", justifyContent: "center", alignItems: "center" }}>
+                      <Text style={{ fontWeight: "500", fontSize: 24, lineHeight: "100%", color: "rgba(251, 252, 255, 1)" }}>IND</Text>
+                    </View>
+                  </View>
+                  <View style={{ width: 191.25, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                    <View style={{ width: 69, height: 45, justifyContent: "center", alignItems: "center", borderRadius: 5, borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
+                      <Text style={{ fontSize: 14, fontWeight: "500", lineHeight: "100%", color: "rgba(0, 255, 30, 1)" }}>-300</Text>
+                    </View>
+                    <View style={{ width: 25, height: 19 }}>
+                      <Image source={IMG_CONST.photo} style={{ width: 18, height: 18 }} />
+                    </View>
+                    <View style={{ width: 69, height: 45, borderRadius: 5, justifyContent: "center", alignItems: "center", borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
+                      <Text style={{ fontSize: 14, fontWeight: "500", lineHeight: "100%", color: "rgba(0, 255, 30, 1)" }}>+290</Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={{ width: 191.25, height: 20, borderRadius: 45, flexDirection: "row", backgroundColor: "rgba(101, 113, 83, 1)", alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
+                  <Image source={IMG_CONST.equalizer} style={{ width: 15, height: 15, marginRight: 5 }} />
+                  <Text style={{ fontWeight: "500", fontSize: 14, marginLeft: 5, lineHeight: "100%", color: "rgba(226, 224, 224, 1)" }}>200.3k</Text>
+                </View>
+                <Text style={{ fontSize: 12, lineHeight: "100%", fontWeight: 400, color: "rgba(142, 142, 147, 1)", textAlign: "center" }}>7:30pm EST 05 JUN</Text>
               </View>
-              <View style={{ width: 41.35, height: 42, borderRadius: 6, backgroundColor: "rgba(60, 60, 67, 0.6)", justifyContent: "center", alignItems: "center" }}>
-                <Image source={IMG_CONST.basketball} style={{ width: 30, height: 25 }} />
-              </View>
-              <View style={{ width: 69, height: 42, borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)" }}>
-              </View>
-            </View>
-            <View style={{ width: 191.25, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <View style={{ width: 69, height: 45, borderRadius: 5, borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
-              </View>
-              <View style={{ width: 25, height: 19 }}>
-                <Image source={IMG_CONST.photo} style={{ width: 18, height: 18 }} />
-              </View>
-              <View style={{ width: 69, height: 45, borderRadius: 5, borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
-              </View>
-            </View>
-          </View>
-          <View style={{ width: 191.25, height: 20, borderRadius: 45, flexDirection: "row", backgroundColor: "rgba(101, 113, 83, 1)", alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
-            <Image source={IMG_CONST.equalizer} style={{ width: 15, height: 15, marginRight: 5 }} />
-            <Text style={{ fontWeight: "500", fontSize: 14, marginLeft: 5, lineHeight: "100%", color: "rgba(226, 224, 224, 1)" }}>200.3k</Text>
-          </View>
-          <Text style={{ fontSize: 12, lineHeight: "100%", fontWeight: 400, color: "rgba(142, 142, 147, 1)", textAlign: "center" }}>7:30pm EST 05 JUN</Text>
+            }
+            keyExtractor={item => item.id}
+          />
         </View>
         <Text style={{ fontSize: 16, fontWeight: "700", lineHeight: "100%", style: "bold", color: "rgba(255, 255, 255, 1)", left: 15, marginTop: 20 }}>Starting Soon</Text>
         <View style={{ width: 220, height: 165, borderRadius: 6, borderWidth: 0.5, backgroundColor: "#272727", borderColor: "rgba(217, 217, 217, 0.5)", marginTop: 10, justifyContent: "space-evenly", left: 15.75 }}>

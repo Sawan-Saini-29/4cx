@@ -1,28 +1,72 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
-import axios from 'axios';
+import React from 'react';
+import {
+  View,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import * as IMG_CONST from "../Screen/assets";
+import * as IMG_CONST from '../Screen/assets';
 
 const LandingScreen = () => {
-    return (
-        <View style={{ flex: 1, backgroundColor: '#272D58', justifyContent: "center", alignItems: "center" }}>
-            <View style={{height:400,justifyContent:"space-between",alignItems:"center"}}>
-            <Image source={IMG_CONST.SpleshIcon} style={{ width: 303, height: 176 }} />
-            <View>
-                <TouchableOpacity style={{marginBottom:10}}>
-                    <Image source={IMG_CONST.SignUp} style={{ width: 319, height: 47 }} />
-                </TouchableOpacity>
-                <TouchableOpacity style={{ width: 319, height: 47, borderRadius: 6, backgroundColor: "#FFFFFF" }}>
-                    <Image source={IMG_CONST.LogIn} style={{ width: 319, height: 47 }} />
-                </TouchableOpacity>
-            </View>
-            </View>
+  const navigation = useNavigation();
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.contentWrapper}>
+        <Image source={IMG_CONST.SpleshIcon} style={styles.logo} />
+
+        <View style={styles.buttonGroup}>
+          <TouchableOpacity
+            style={styles.buttonWrapper}
+            onPress={() => navigation.navigate('SignUpScreen')}
+          >
+            <Image source={IMG_CONST.SignUp} style={styles.buttonImage} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.buttonWrapper, styles.loginButtonBackground]}
+            onPress={() => navigation.navigate('LoginScreen')}
+          >
+            <Image source={IMG_CONST.LogIn} style={styles.buttonImage} />
+          </TouchableOpacity>
         </View>
-    );
+      </View>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#272D58',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  contentWrapper: {
+    height: 400,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  logo: {
+    width: 303,
+    height: 176,
+    resizeMode: 'contain',
+  },
+  buttonGroup: {
+    alignItems: 'center',
+  },
+  buttonWrapper: {
+    marginBottom: 10,
+  },
+  loginButtonBackground: {
+    borderRadius: 6,
+  },
+  buttonImage: {
+    width: 319,
+    height: 47,
+    resizeMode: 'contain',
+  },
 });
 
 export default LandingScreen;
