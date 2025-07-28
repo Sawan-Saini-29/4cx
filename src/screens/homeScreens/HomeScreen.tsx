@@ -5,6 +5,7 @@ import ApiService from '../../apiService/apiService';
 import moment from 'moment-timezone';
 
 import { BaseballIcon, SoccerBall, TennisBallIcon, CricketIcon, UserCirclePlusIcon, Basketball, FootballIcon, GolfIcon, BoxingGlove, SoccerBallIcon } from "phosphor-react-native"
+import Scale, { verticalScale } from '../../components/Scale';
 
 const HomeScreen = () => {
 
@@ -16,6 +17,10 @@ const HomeScreen = () => {
   });
   const [SportLeagues, setSportLeagues] = useState<Array<string>>([]);
   const [TopTraded, setTopTraded] = useState<any>()
+  const [isOpen, setIsOpen] = useState(false)
+  const [isSelected, setIsSelected] = useState("")
+  const [isSelectedImg, setIsSelectedImg] = useState("")
+  const [UpcomingEvent, setUpcomingEvent] = useState<Array<string>>([]);
   useEffect(() => {
     const apicalls = async () => {
       await getUserData();
@@ -91,6 +96,7 @@ const HomeScreen = () => {
       );
       if (response) {
         console.log("@@@ =========== exchange/getUpcomingEvent", response)
+        setUpcomingEvent(response.data.games)
       }
     }
     catch (error: any) {
@@ -121,29 +127,40 @@ const HomeScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <View key={1} style={{ padding: 20 }}>
-        <View style={{ marginTop: 73, justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
-          <Text style={{ fontWeight: "400", fontStyle: "normal", fontSize: 16, color: "#FBFCFF" }}>{userdata?.user?.username}</Text>
-          <View style={{ width: 24, height: 24 }}>
-            <Image source={IMG_CONST.modalCloseImg} style={{ width: 24, height: 24 }} />
+      <View key={1} style={{ padding: Scale(20) }}>
+        <View style={{ marginTop: Scale(50), justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
+          <Text style={{ fontWeight: "400", fontStyle: "normal", fontSize: 18, color: "#FBFCFF" }}>{userdata?.user?.username}</Text>
+          <View style={{ width: Scale(24), height: verticalScale(24) }}>
+            <Image source={IMG_CONST.modalCloseImg} resizeMode='contain' style={{ width: Scale(24), height: verticalScale(24) }} />
           </View>
         </View>
-        <View style={{ width: 253, height: 60, alignItems: "center", alignSelf: "center", marginTop: 40 }}>
-          <Text style={{ fontSize: 12, fontWeight: "400", color: "#8E8E93" }}>Available Balance</Text>
-          <View style={{ width: 242, height: 42, borderRadius: 3, borderWidth: 0.5, marginTop: 5, borderColor: "#E2E0E0", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-            <View style={{ width: 25.4, height: 17, marginLeft: 10 }}>
-              <Image source={IMG_CONST.cash} style={{ width: 25.4, height: 17 }} />
+        <View style={{ width:Scale(253), height: verticalScale(60), alignItems: "center", alignSelf: "center", marginTop: verticalScale(40) }}>
+          <Text style={{ fontSize: 14, fontWeight: "400", color: "#8E8E93" }}>Available Balance</Text>
+          <TouchableOpacity onPress={()=>setIsOpen(!isOpen)} style={{ width: Scale(242), height: verticalScale(42), borderRadius: 3, borderWidth: 0.5, marginTop: Scale(5), borderColor: "#E2E0E0", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+            <View style={{ width: Scale(25.4), height: verticalScale(17), marginLeft: Scale(10) }}>
+              <Image source={IMG_CONST.cash} style={{ width: Scale(25.4), height: verticalScale(17) }} />
             </View>
-            <Text style={{ fontSize: 32, fontWeight: "700", textAlign: "center", color: "rgba(255, 255, 255, 1)" }}>{userdata?.user?.coinsBalance}</Text>
-            <View style={{ width: 10, height: 5, marginRight: 10 }}>
-              <Image source={IMG_CONST.Vector} style={{ width: 10, height: 5 }} />
+            <Text style={{ fontSize: 32, fontWeight: "700", textAlign: "center", color: "rgba(255, 255, 255, 1)" }}>{userdata?.user?.displayBalance}</Text>
+            <View style={{ width: Scale(10), height: verticalScale(5), marginRight: Scale(10) }}>
+              <Image source={IMG_CONST.Vector} style={{ width: Scale(10), height: verticalScale(5) }} />
             </View>
-          </View>
+          </TouchableOpacity>
         </View>
-        <Text style={{ fontWeight: "400", fontSize: 12, textDecorationStyle: "solid", color: "#E2E0E0", textAlign: "center", marginTop: 5, textDecorationLine: "underline" }}>$5,000 potential payout</Text>
+        {isOpen == true &&
+          <View style={{ width: Scale(242), backgroundColor: "transparent", alignSelf: "center" , borderWidth:Scale(0.5), borderColor:"#fff"}}>
+            <TouchableOpacity style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: Scale(10), marginRight: Scale(10), alignItems: "center" }}>
+              <Text style={{ fontSize: 30, color:"#fff" }}>{userdata?.user?.cashBalance}</Text>
+              <Image source={IMG_CONST.cash} style={{ width: Scale(25.4), height: verticalScale(17) }} />
+            </TouchableOpacity>
+            <TouchableOpacity style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: Scale(10), marginRight: Scale(10), alignItems: "center" }}>
+              <Text style={{ fontSize: 30, color:"#fff" }}>{userdata?.user?.coinsBalance}</Text>
+              <Image source={IMG_CONST.cash} style={{ width: Scale(25.4), height: verticalScale(17) }} />
+            </TouchableOpacity>
+          </View>}
+        <Text style={{ fontWeight: "400", fontSize: Scale(12), textDecorationStyle: "solid", color: "#E2E0E0", textAlign: "center", marginTop: 5, textDecorationLine: "underline" }}>$5,000 potential payout</Text>
         <View style={styles.buttonRow}>
           <TouchableOpacity style={styles.withdrawBtn}>
-            <Image source={IMG_CONST.Withdraw} style={{ width: 17.64, height: 16, marginRight: 5 }} />
+            <Image source={IMG_CONST.Withdraw} style={{ width: Scale(17.64), height: verticalScale(16), marginRight: Scale(5) }} />
             <Text style={styles.btnText1}>Withdraw</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.depositBtn}>
@@ -154,15 +171,14 @@ const HomeScreen = () => {
       <View key={2} style={{ width: "100%", height: "100%", backgroundColor: "#232323", borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
         <View>
           <FlatList
-            contentContainerStyle={{ justifyContent: "space-between", height: 81, marginTop: 40, }}
+            contentContainerStyle={{ justifyContent: "space-between", height: verticalScale(81), marginTop: verticalScale(40), }}
             data={SportLeagues}
             horizontal
             showsHorizontalScrollIndicator={false}
-            renderItem={({ item }: any) => <View style={{ marginHorizontal: 10 }}>
-              <View style={{ width: 55.69, height: 55.69, borderRadius: 6, backgroundColor: "rgba(60, 60, 67, 0.6)", justifyContent: "center", alignItems: "center" }}>
+            renderItem={({ item }: any) => <View style={{ marginHorizontal: Scale(8) }}>
+              <View style={{ width: Scale(60), height: Scale(60), borderRadius: 6, backgroundColor: "rgba(60, 60, 67, 0.6)", justifyContent: "center", alignItems: "center" }}>
                 {iconRender(item)}
               </View>
-
               <Text style={styles.sportLabel}>{item}</Text>
             </View>
             }
@@ -170,9 +186,9 @@ const HomeScreen = () => {
           />
         </View>
         <View style={{ width: "100%", flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={{ fontSize: 16, fontWeight: "700", color: "rgba(255, 255, 255, 1)", left: 15, marginTop: 10 }}>Hottest Markets</Text>
+          <Text style={{ fontSize: 16, fontWeight: "700", color: "rgba(255, 255, 255, 1)", left: 15, marginTop: verticalScale(10) }}>Hottest Markets</Text>
           <TouchableOpacity>
-            <Text style={{ fontSize: 16, fontWeight: "700", color: "rgba(98, 195, 112, 1)", right: 15, marginTop: 10 }}>View All</Text>
+            <Text style={{ fontSize: 16, fontWeight: "700", color: "rgba(98, 195, 112, 1)", right: 15, marginTop: verticalScale(10) }}>View All</Text>
           </TouchableOpacity>
         </View>
         <View>
@@ -185,36 +201,37 @@ const HomeScreen = () => {
               console.log("@@@ =========== item", item)
               return (
                 <View style={{
-                  width: 220, height: 165, borderRadius: 6, borderWidth: 0.5, backgroundColor: "#272727", borderColor: "rgba(217, 217, 217, 0.5)", marginTop: 10, justifyContent: "space-evenly",
-                  marginHorizontal: 16,
+                  width: Scale(220), height: verticalScale(165), borderRadius: 6, borderWidth: 0.5, backgroundColor: "#272727", borderColor: "rgba(217, 217, 217, 0.5)", marginTop: verticalScale(10), justifyContent: "space-evenly",
+                  marginHorizontal: 8,
                 }}>
-                  <View style={{ width: 191.25, height: 95.5, alignSelf: "center", justifyContent: "space-between", marginTop: 8 }}>
-                    <View style={{ width: 191.25, flexDirection: "row", justifyContent: "space-between" }}>
-                      <View style={{ width: 69, height: 42, borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)", justifyContent: "center", alignItems: "center" }}>
-                        <Text style={{ fontWeight: "500", fontSize: 24, color: "rgba(251, 252, 255, 1)" }}>{item?.participants[0]?.shortName}</Text>
+                  <View style={{ width: Scale(191.25), height: verticalScale(95.5), alignSelf: "center", justifyContent: "space-between", marginTop: verticalScale(8) }}>
+                    <View style={{ width: Scale(191.25), flexDirection: "row", justifyContent: "space-between" }}>
+                      <View style={{ width: Scale(65), height: verticalScale(42), borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)", justifyContent: "center", alignItems: "center" }}>
+                        <Text style={{ fontWeight: "500", fontSize: Scale(24), color: "rgba(251, 252, 255, 1)" }}>{item?.participants[0]?.shortName}</Text>
                       </View>
-                      <View style={{ width: 41.35, height: 42, borderRadius: 6, backgroundColor: "rgba(60, 60, 67, 0.6)", justifyContent: "center", alignItems: "center" }}>
-                        <Image source={IMG_CONST.basketball} style={{ width: 30, height: 25 }} />
+                      <View style={{ width: Scale(47), height: verticalScale(42), borderRadius: 6, backgroundColor: "rgba(60, 60, 67, 0.6)", justifyContent: "center", alignItems: "center" }}>
+                        {/* <Image source={IMG_CONST.basketball} resizeMode='contain' style={{ width: Scale(30), height: verticalScale(25) }} /> */}
+                        {iconRender(item.sport)}
                       </View>
-                      <View style={{ width: 69, height: 42, borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)", justifyContent: "center", alignItems: "center" }}>
+                      <View style={{ width: Scale(69), height: verticalScale(42), borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)", justifyContent: "center", alignItems: "center" }}>
                         <Text style={{ fontWeight: "500", fontSize: 24, color: "rgba(251, 252, 255, 1)" }}>{item?.participants[1]?.shortName}</Text>
                       </View>
                     </View>
-                    <View style={{ width: 191.25, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                      <View style={{ width: 69, height: 45, justifyContent: "center", alignItems: "center", borderRadius: 5, borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
+                    <View style={{ width: Scale(191.25), flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                      <View style={{ width: Scale(65), height: Scale(45), justifyContent: "center", alignItems: "center", borderRadius: 5, borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
                         <Text style={{ fontSize: 14, fontWeight: "500", color: "rgba(0, 255, 30, 1)" }}>{item?.awayMoneylines[0]?.odds}</Text>
                       </View>
-                      <View style={{ width: 25, height: 19 }}>
-                        <Image source={IMG_CONST.photo} style={{ width: 18, height: 18 }} />
+                      <View style={{ width: Scale(25), height: verticalScale(19) }}>
+                        <Image source={IMG_CONST.photo} resizeMode='contain' style={{ width: Scale(18), height: verticalScale(18) }} />
                       </View>
-                      <View style={{ width: 69, height: 45, borderRadius: 5, justifyContent: "center", alignItems: "center", borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
+                      <View style={{ width: Scale(69), height: Scale(45), borderRadius: 5, justifyContent: "center", alignItems: "center", borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
                         <Text style={{ fontSize: 14, fontWeight: "500", color: "rgba(0, 255, 30, 1)" }}>{item?.homeMoneylines[0]?.odds}</Text>
                       </View>
                     </View>
                   </View>
-                  <View style={{ width: 191.25, height: 20, borderRadius: 45, flexDirection: "row", backgroundColor: "rgba(101, 113, 83, 1)", alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
-                    <Image source={IMG_CONST.equalizer} style={{ width: 15, height: 15, marginRight: 5 }} />
-                    <Text style={{ fontWeight: "500", fontSize: 14, marginLeft: 5, color: "rgba(226, 224, 224, 1)" }}>200.3k</Text>
+                  <View style={{ width: Scale(191.25), height: verticalScale(20), borderRadius: 45, flexDirection: "row", backgroundColor: "rgba(101, 113, 83, 1)", alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
+                    <Image source={IMG_CONST.equalizer} style={{ width: Scale(15), height: verticalScale(15), marginRight: Scale(5) }} />
+                    <Text style={{ fontWeight: "500", fontSize: 14, marginLeft: Scale(5), color: "rgba(226, 224, 224, 1)" }}>200.3k</Text>
                   </View>
                   <Text style={{ fontSize: 12, fontWeight: 400, color: "rgba(142, 142, 147, 1)", textAlign: "center" }}>{formatToCustom(item?.start)}</Text>
                 </View>
@@ -224,34 +241,25 @@ const HomeScreen = () => {
             keyExtractor={(item: any) => item.id}
           />
         </View>
-        <Text style={{ fontSize: 16, fontWeight: "700", color: "rgba(255, 255, 255, 1)", left: 15, marginTop: 20 }}>Starting Soon</Text>
-        <View style={{ width: 220, height: 165, borderRadius: 6, borderWidth: 0.5, backgroundColor: "#272727", borderColor: "rgba(217, 217, 217, 0.5)", marginTop: 10, justifyContent: "space-evenly", left: 15.75 }}>
-          <View style={{ width: 191.25, height: 95.5, alignSelf: "center", justifyContent: "space-between", marginTop: 8 }}>
-            <View style={{ width: 191.25, flexDirection: "row", justifyContent: "space-between" }}>
-              <View style={{ width: 69, height: 42, borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)" }}>
-              </View>
-              <View style={{ width: 41.35, height: 42, borderRadius: 6, backgroundColor: "rgba(60, 60, 67, 0.6)", justifyContent: "center", alignItems: "center" }}>
-                <Image source={IMG_CONST.basketball} style={{ width: 30, height: 25 }} />
-              </View>
-              <View style={{ width: 69, height: 42, borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)" }}>
-              </View>
-            </View>
-            <View style={{ width: 191.25, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <View style={{ width: 69, height: 45, borderRadius: 5, borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
-              </View>
-              <View style={{ width: 25, height: 19 }}>
-                <Image source={IMG_CONST.photo} style={{ width: 18, height: 18 }} />
-              </View>
-              <View style={{ width: 69, height: 45, borderRadius: 5, borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
-              </View>
-            </View>
-          </View>
-          <View style={{ width: 191.25, height: 20, borderRadius: 45, flexDirection: "row", backgroundColor: "rgba(101, 113, 83, 1)", alignSelf: "center", justifyContent: "center", alignItems: "center" }}>
-            <Image source={IMG_CONST.equalizer} style={{ width: 15, height: 15, marginRight: 5 }} />
-            <Text style={{ fontWeight: "500", fontSize: 14, marginLeft: 5, color: "rgba(226, 224, 224, 1)" }}>200.3k</Text>
-          </View>
-          <Text style={{ fontSize: 12, fontWeight: 400, color: "rgba(142, 142, 147, 1)", textAlign: "center" }}>7:30pm EST 05 JUN</Text>
+        <Text style={{ fontSize: 16, fontWeight: "700", color: "rgba(255, 255, 255, 1)", left: 15, marginTop: verticalScale(20) }}>Starting Soon</Text>
+         <FlatList
+            contentContainerStyle={{ justifyContent: "space-between", }}
+            data={UpcomingEvent}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }: any) => 
+               <View style={{ width: Scale(220), padding:Scale(10), height:verticalScale(150),marginHorizontal: Scale(8), borderRadius: 6, borderWidth: 0.5, backgroundColor: "#272727", borderColor: "rgba(217, 217, 217, 0.5)", marginTop: verticalScale(10), justifyContent: "space-evenly",  }}>
+                {iconRender(item.sport)}
+          <View>
+        <Text style={{color:"#fff",}}>{item.eventNameM}</Text>
+        <Text style={{color:"#fff",marginTop:5}}>{item.league}</Text>
         </View>
+        <Text style={{color:"#fff",marginTop:5}}>{item.timeTo}</Text>
+        </View>
+            }
+            keyExtractor={(item: any) => item.id}
+          />
+       
       </View>
     </ScrollView>
   );
@@ -265,18 +273,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#272D58',
   },
   header: {
-    marginBottom: 20,
+    marginBottom: Scale(20),
   },
   name: {
     color: '#fff',
     fontSize: 20,
-    marginBottom: 10,
+    marginBottom: Scale(10),
   },
   balanceContainer: {
     backgroundColor: '#081C3B',
-    padding: 15,
+    padding: Scale(15),
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: Scale(10),
   },
   balanceText: {
     fontSize: 28,
@@ -289,42 +297,42 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: 9,
-    marginTop: 40,
+    justifyContent: 'space-evenly',
+    margin: Scale(9),
+    marginTop: verticalScale(40),
   },
   withdrawBtn: {
     backgroundColor: '#343B86',
-    width: 159,
-    height: 44,
-    borderRadius: 6,
+    width: Scale(159),
+    height: verticalScale(35),
+    borderRadius: Scale(6),
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
   },
   depositBtn: {
     backgroundColor: '#ffffff',
-    width: 159,
-    height: 44,
-    borderRadius: 6,
+    width: Scale(159),
+    height: verticalScale(35),
+    borderRadius: Scale(6),
     justifyContent: 'center',
     alignItems: 'center',
   },
   btnText: {
     color: '#343B86',
     fontWeight: '400',
-    fontSize: 16,
+    fontSize: Scale(16),
   },
   btnText1: {
     color: '#FFFFFF',
     fontWeight: '400',
     fontSize: 16,
-    marginLeft: 5,
+    marginLeft: Scale(5),
   },
   sportsIcons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginVertical: 20,
+    marginVertical: verticalScale(20),
   },
   sportItem: {
     alignItems: 'center',
@@ -334,15 +342,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
     fontWeight: '400',
-    marginTop: 5,
+    marginTop: Scale(5),
   },
   marketSection: {
-    marginTop: 20,
+    marginTop: Scale(20),
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    marginBottom: Scale(10),
   },
   sectionTitle: {
     color: '#fff',
@@ -355,9 +363,9 @@ const styles = StyleSheet.create({
   },
   marketCard: {
     backgroundColor: '#0D1B3E',
-    padding: 15,
+    padding: Scale(15),
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: Scale(10),
   },
   teamsRow: {
     flexDirection: 'row',
@@ -379,11 +387,11 @@ const styles = StyleSheet.create({
   volume: {
     color: '#a0f0ff',
     fontSize: 12,
-    marginTop: 5,
+    marginTop: Scale(5),
   },
   time: {
     color: '#ccc',
     fontSize: 12,
-    marginTop: 2,
+    marginTop: Scale(2),
   },
 });

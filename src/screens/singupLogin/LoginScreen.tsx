@@ -13,6 +13,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import * as IMG_CONST from '../../components/assets';
 import ApiService from '../../apiService/apiService';
+import Scale, { verticalScale } from '../../components/Scale';
 
 const LoginScreen = () => {
   const navigation = useNavigation() as any;
@@ -59,6 +60,7 @@ const LoginScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+    
       <Image source={IMG_CONST.SpleshIcon} style={styles.logoImage} />
 
       <View style={styles.card}>
@@ -117,50 +119,48 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#272D58',
     alignItems: 'center',
-    padding: 20,
+    padding: Scale(20),
+    justifyContent:"center"
   },
   logoImage: {
-    width: 209,
-    height: 121,
-    marginTop: 40,
+    width: Scale(209),
+    height: Scale(121),
   },
   card: {
-    width: 373,
+    width: Scale(373),
     backgroundColor: 'rgba(53, 53, 53, 1)',
     borderRadius: 10,
-    marginTop: 80,
-    paddingVertical: 30,
-    paddingHorizontal: 10,
+    marginTop: verticalScale(60),
     alignItems: 'center',
   },
   inputGroup: {
-    width: 351,
-    marginTop: 20,
+    width: Scale(351),
+    marginTop: verticalScale(20),
   },
   label: {
     fontWeight: '500',
     fontSize: 14,
     color: 'rgba(255, 255, 255, 1)',
-    marginBottom: 5,
+    marginBottom: Scale(5),
   },
   input: {
     width: '100%',
-    height: 36,
+    height: verticalScale(36),
     backgroundColor: 'rgba(35, 35, 35, 1)',
     color: '#fff',
-    paddingHorizontal: 10,
+    paddingHorizontal: Scale(10),
     borderRadius: 6,
   },
   loginButton: {
-    width: 351,
-    height: 44,
+    width: Scale(351),
+    height: Scale(44),
     alignSelf: 'center',
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: verticalScale(20),
+    marginBottom: Scale(20),
   },
   loader: {
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: verticalScale(20),
+    marginBottom: Scale(20),
   },
   forgotPasswordText: {
     fontSize: 16,
@@ -168,13 +168,13 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     textAlign: 'center',
     color: 'rgba(226, 224, 224, 1)',
-    marginBottom: 10,
+    marginBottom: Scale(10),
   },
   signupPrompt: {
     fontSize: 20,
     fontWeight: '400',
     color: 'rgba(255, 255, 255, 1)',
-    marginTop: 20,
+    marginTop: verticalScale(20),
   },
   signupLink: {
     color: 'rgba(0, 136, 255, 1)',
