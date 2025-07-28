@@ -11,7 +11,7 @@ export const SignUp = require("../assest/SignUp.png");
 export const LogIn = require("../assest/LogIn.png");
 export const ContinueButton = require("../assest/ContinueButton.png");
 export const LogInButton = require("../assest/default.png");
-
+export const coins = require("../assest/coins.png");
 
 
 

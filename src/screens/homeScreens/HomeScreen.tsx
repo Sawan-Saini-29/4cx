@@ -104,6 +104,26 @@ const HomeScreen = () => {
     }
   }
 
+  const updateCoins = async (playerMode:string) => {
+    setIsOpen(!isOpen)
+    try {
+      const response = await ApiService.post<any>(
+        "user/updateCoinsOrCash",
+        {
+          "playerMode":playerMode
+        },
+        'json'
+      );
+      if (response) {
+        console.log("@@@ =========== exchange/updateCoins", response)
+        await getUserData();
+      }
+    }
+    catch (error: any) {
+      Alert.alert("@@@ api error", error)
+    }
+  }
+
   const formatToCustom = (isoDate: string): string => {
     const date = moment(isoDate).local(); // Convert from UTC to local device time
     return date.format('h:mma DD MMM').toLowerCase(); // Example: 7:30pm 05 jun
@@ -138,7 +158,7 @@ const HomeScreen = () => {
           <Text style={{ fontSize: 14, fontWeight: "400", color: "#8E8E93" }}>Available Balance</Text>
           <TouchableOpacity onPress={()=>setIsOpen(!isOpen)} style={{ width: Scale(242), height: verticalScale(42), borderRadius: 3, borderWidth: 0.5, marginTop: Scale(5), borderColor: "#E2E0E0", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
             <View style={{ width: Scale(25.4), height: verticalScale(17), marginLeft: Scale(10) }}>
-              <Image source={IMG_CONST.cash} style={{ width: Scale(25.4), height: verticalScale(17) }} />
+              <Image resizeMode="contain" source={userdata?.user?.playerMode == "cash" ?IMG_CONST.cash:IMG_CONST.coins} style={{ width: Scale(25.4), height: verticalScale(17) }} />
             </View>
             <Text style={{ fontSize: 32, fontWeight: "700", textAlign: "center", color: "rgba(255, 255, 255, 1)" }}>{userdata?.user?.displayBalance}</Text>
             <View style={{ width: Scale(10), height: verticalScale(5), marginRight: Scale(10) }}>
@@ -148,13 +168,13 @@ const HomeScreen = () => {
         </View>
         {isOpen == true &&
           <View style={{ width: Scale(242), backgroundColor: "transparent", alignSelf: "center" , borderWidth:Scale(0.5), borderColor:"#fff"}}>
-            <TouchableOpacity style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: Scale(10), marginRight: Scale(10), alignItems: "center" }}>
+            <TouchableOpacity onPress={()=>userdata?.user?.playerMode == "coins" ? updateCoins("cash") : setIsOpen(!isOpen)} style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: Scale(10), marginRight: Scale(10), alignItems: "center" }}>
               <Text style={{ fontSize: 30, color:"#fff" }}>{userdata?.user?.cashBalance}</Text>
-              <Image source={IMG_CONST.cash} style={{ width: Scale(25.4), height: verticalScale(17) }} />
+              <Image resizeMode="contain" source={IMG_CONST.cash} style={{ width: Scale(25.4), height: verticalScale(17) }} />
             </TouchableOpacity>
-            <TouchableOpacity style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: Scale(10), marginRight: Scale(10), alignItems: "center" }}>
+            <TouchableOpacity onPress={()=>userdata?.user?.playerMode == "cash" ? updateCoins("coins") : setIsOpen(!isOpen)} style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: Scale(10), marginRight: Scale(10), alignItems: "center" }}>
               <Text style={{ fontSize: 30, color:"#fff" }}>{userdata?.user?.coinsBalance}</Text>
-              <Image source={IMG_CONST.cash} style={{ width: Scale(25.4), height: verticalScale(17) }} />
+              <Image resizeMode="contain" source={IMG_CONST.coins} style={{ width: Scale(25.4), height: verticalScale(17) }} />
             </TouchableOpacity>
           </View>}
         <Text style={{ fontWeight: "400", fontSize: Scale(12), textDecorationStyle: "solid", color: "#E2E0E0", textAlign: "center", marginTop: 5, textDecorationLine: "underline" }}>$5,000 potential payout</Text>
