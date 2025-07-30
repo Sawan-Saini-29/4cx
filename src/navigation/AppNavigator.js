@@ -8,6 +8,7 @@ import SplashScreen from '../screens/splashScreen/SplashScreen';
 import LandingScreen from '../screens/splashScreen/LandingScreen';
 import SingUpScreen from '../screens/singupLogin/SingUpScreen';
 import SingUpScreen2 from '../screens/singupLogin/SingUpScreen2';
+import MainTabScreen from "../navigation/BottomTabNavigator/src/BottomTabNavigator"
 
 
 const Stack = createStackNavigator();
@@ -20,11 +21,11 @@ export default function AppNavigator() {
       }}>
         {/* <Stack.Screen name="SingUpScreen" component={SingUpScreen} /> */}
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
-        <Stack.Screen name="spleceScreen" component={SplashScreen} />
+        <Stack.Screen name="MainTabScreen" component={MainTabScreen} />
+        {/* <Stack.Screen name="spleceScreen" component={SplashScreen} />
         <Stack.Screen name="LandingScreen" component={LandingScreen} />
         <Stack.Screen name="SingUpScreen" component={SingUpScreen} />
-        <Stack.Screen name="SingUpScreen2" component={SingUpScreen2} />
+        <Stack.Screen name="SingUpScreen2" component={SingUpScreen2} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

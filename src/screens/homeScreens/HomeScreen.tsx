@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList, Alert, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList, Alert, Image, ActivityIndicator } from 'react-native';
 import * as IMG_CONST from "../../components/assets";
 import ApiService from '../../apiService/apiService';
 import moment from 'moment-timezone';
 
 import { BaseballIcon, SoccerBall, TennisBallIcon, CricketIcon, UserCirclePlusIcon, Basketball, FootballIcon, GolfIcon, BoxingGlove, SoccerBallIcon } from "phosphor-react-native"
 import Scale, { verticalScale } from '../../components/Scale';
+import Loader from '../../components/Loader';
 
 const HomeScreen = () => {
 
@@ -21,12 +22,20 @@ const HomeScreen = () => {
   const [isSelected, setIsSelected] = useState("")
   const [isSelectedImg, setIsSelectedImg] = useState("")
   const [UpcomingEvent, setUpcomingEvent] = useState<Array<string>>([]);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const apicalls = async () => {
+      setLoading(true);
+      try  {
       await getUserData();
       await getSportLeagues();
       await getTopTraded();
       await getUpcomingEvent();
+      }
+      finally {
+       setLoading(false);
+      }
     }
     apicalls();
   }, []);
@@ -147,6 +156,7 @@ const HomeScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <Loader  loading={loading}></Loader>
       <View key={1} style={{ padding: Scale(20) }}>
         <View style={{ marginTop: Scale(50), justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
           <Text style={{ fontWeight: "400", fontStyle: "normal", fontSize: 18, color: "#FBFCFF" }}>{userdata?.user?.username}</Text>
@@ -166,6 +176,7 @@ const HomeScreen = () => {
             </View>
           </TouchableOpacity>
         </View>
+
         {isOpen == true &&
           <View style={{ width: Scale(242), backgroundColor: "transparent", alignSelf: "center" , borderWidth:Scale(0.5), borderColor:"#fff"}}>
             <TouchableOpacity onPress={()=>userdata?.user?.playerMode == "coins" ? updateCoins("cash") : setIsOpen(!isOpen)} style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: Scale(10), marginRight: Scale(10), alignItems: "center" }}>
@@ -218,7 +229,7 @@ const HomeScreen = () => {
             horizontal
             showsHorizontalScrollIndicator={false}
             renderItem={({ item }: any) => {
-              console.log("@@@ =========== item", item)
+              console.log("@@@ =========== item", item?.awayMoneylines[0]?.odds)
               return (
                 <View style={{
                   width: Scale(220), height: verticalScale(165), borderRadius: 6, borderWidth: 0.5, backgroundColor: "#272727", borderColor: "rgba(217, 217, 217, 0.5)", marginTop: verticalScale(10), justifyContent: "space-evenly",
@@ -227,25 +238,24 @@ const HomeScreen = () => {
                   <View style={{ width: Scale(191.25), height: verticalScale(95.5), alignSelf: "center", justifyContent: "space-between", marginTop: verticalScale(8) }}>
                     <View style={{ width: Scale(191.25), flexDirection: "row", justifyContent: "space-between" }}>
                       <View style={{ width: Scale(65), height: verticalScale(42), borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)", justifyContent: "center", alignItems: "center" }}>
-                        <Text style={{ fontWeight: "500", fontSize: Scale(24), color: "rgba(251, 252, 255, 1)" }}>{item?.participants[0]?.shortName}</Text>
+                        <Text style={{ fontWeight: "500", fontSize: Scale(14), color: "rgba(251, 252, 255, 1)" }}>{item?.participants[0]?.shortName}</Text>
                       </View>
                       <View style={{ width: Scale(47), height: verticalScale(42), borderRadius: 6, backgroundColor: "rgba(60, 60, 67, 0.6)", justifyContent: "center", alignItems: "center" }}>
-                        {/* <Image source={IMG_CONST.basketball} resizeMode='contain' style={{ width: Scale(30), height: verticalScale(25) }} /> */}
                         {iconRender(item.sport)}
                       </View>
                       <View style={{ width: Scale(69), height: verticalScale(42), borderRadius: 4, backgroundColor: "rgba(35, 35, 35, 1)", justifyContent: "center", alignItems: "center" }}>
-                        <Text style={{ fontWeight: "500", fontSize: 24, color: "rgba(251, 252, 255, 1)" }}>{item?.participants[1]?.shortName}</Text>
+                        <Text style={{ fontWeight: "500", fontSize: Scale(14), color: "rgba(251, 252, 255, 1)" }}>{item?.participants[1]?.shortName}</Text>
                       </View>
                     </View>
                     <View style={{ width: Scale(191.25), flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                       <View style={{ width: Scale(65), height: Scale(45), justifyContent: "center", alignItems: "center", borderRadius: 5, borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
-                        <Text style={{ fontSize: 14, fontWeight: "500", color: "rgba(0, 255, 30, 1)" }}>{item?.awayMoneylines[0]?.odds}</Text>
+                        <Text style={{ fontSize: 14, fontWeight: "500", color: "rgba(0, 255, 30, 1)" }}>{item?.awayMoneylines[0]?.odds == undefined ? "+" : item?.awayMoneylines[0]?.odds}</Text>
                       </View>
                       <View style={{ width: Scale(25), height: verticalScale(19) }}>
                         <Image source={IMG_CONST.photo} resizeMode='contain' style={{ width: Scale(18), height: verticalScale(18) }} />
                       </View>
                       <View style={{ width: Scale(69), height: Scale(45), borderRadius: 5, justifyContent: "center", alignItems: "center", borderWidth: 1, borderColor: "rgba(39, 45, 88, 1)", backgroundColor: "rgba(35, 35, 35, 1)" }}>
-                        <Text style={{ fontSize: 14, fontWeight: "500", color: "rgba(0, 255, 30, 1)" }}>{item?.homeMoneylines[0]?.odds}</Text>
+                        <Text style={{ fontSize: 14, fontWeight: "500", color: "rgba(0, 255, 30, 1)" }}>{item?.homeMoneylines[0]?.odds == undefined ? "+" : item?.homeMoneylines[0]?.odds}</Text>
                       </View>
                     </View>
                   </View>

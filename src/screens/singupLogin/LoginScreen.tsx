@@ -14,6 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import * as IMG_CONST from '../../components/assets';
 import ApiService from '../../apiService/apiService';
 import Scale, { verticalScale } from '../../components/Scale';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
   const navigation = useNavigation() as any;
@@ -47,8 +48,9 @@ const LoginScreen = () => {
       );
       console.log('✅ Login success:', response);
       // TODO: Check response status or token here before navigating
-      if(response) {
-      navigation.navigate('HomeScreen');
+      if(response?.data?.user?.auth) {
+      await AsyncStorage.setItem('authToken', response?.data?.user?.auth);
+      navigation.navigate('MainTabScreen');
       }
     } catch (error: any) {
       console.log('❌ Network or parsing error:', error.message);
